@@ -6,7 +6,10 @@ huge thanks to
 -
 mybearworld, for helping me with most of the debugging and coding
 
+realnotfenixio for helping me find a major bug with my code
+
 engineerrunner, for being rude and accidentally making the phrase "Made for people who dont know how to code, by someone who doesnt know how to code."
+
 
 
 Can be used for:
@@ -25,7 +28,7 @@ just dm me on meower, @Gamerlogan819
 
 current status
 -
-no current major bugs ❌
+no current major bugs ✅
 
 can connect to meower ✅
 
