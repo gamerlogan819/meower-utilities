@@ -5,5 +5,7 @@ A WIP turbowarp extension that interacts with the website app.meower.org. Made f
 Can be used for:
 -
 bots
+
 clients in turbowarp
+
 spamming (dont actually)
