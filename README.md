@@ -9,3 +9,7 @@ bots
 clients in turbowarp
 
 spamming (dont actually)
+
+If you want to contribute versions or get early access:
+-
+just dm me on meower, @Gamerlogan819
