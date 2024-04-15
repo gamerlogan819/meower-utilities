@@ -25,7 +25,7 @@ just dm me on meower, @Gamerlogan819
 
 current status
 -
-no current major bugs ✅
+no current major bugs ❌
 
 can connect to meower ✅
 
