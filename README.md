@@ -27,6 +27,7 @@ current status
 can connect to meower ✅
 
 can send messages ✅
+
 can be turned into a working turbowarp extension ✅
 
 ready for an alpha version ❌
