@@ -22,14 +22,13 @@ spamming (dont actually)
 
 
 
-current status
+known bugs
 -
-can connect to meower ✅
+bots can very easily post 2-3 messages outputted from a single command. to solve this, just out a "wait (0.1) seconds" block after each command script
 
-can send messages ✅
+the websocket can close if youre outside of the tab for a prolonged period of time. thats what the "connect to websocket" block is for
 
-can be turned into a working turbowarp extension ✅
+there is no queue for commands. if two commands are run before the code can respond, only the most recent command will be responded to. you'll have to code your own queue, or use a queue template (dropping soon)
 
-ready for an alpha version ❌
-
+if you find any more bugs or have suggestions, dm @Gamerlogan819 on meower
 
