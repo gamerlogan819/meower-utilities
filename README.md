@@ -6,6 +6,8 @@ huge thanks to
 -
 mybearworld, for helping me with most of the debugging and coding
 
+supernoodles99, for contributing versions and helping with some of the coding
+
 realnotfenixio for helping me find a major bug with my code
 
 engineerrunner, for being rude and accidentally making the phrase "Made for people who dont know how to code, by someone who doesnt know how to code."
