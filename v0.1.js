@@ -180,6 +180,10 @@ class MeowerUtils {
     cloudlink.onmessage = onMessage;
     cloudlink.onopen = () => console.log("WebSocket connection opened.");
     cloudlink.onerror = (error) => console.error("WebSocket error:", error);
+    return new Promise((resolve, reject) => {
+      cloudlink.addEventListener("open", () => { resolve()
+      })
+    })
   }
 }
 
