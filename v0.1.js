@@ -6,11 +6,12 @@ let mostRecentPoster = "None";
 let mostRecentPostOrigin = "None";
 let cloudlink;
 let loggedIn = "None";
+const fails = ["I:011 | Invalid Password", "E:018 | Account Banned", "E:025 | Deleted", "E:101 | Syntax", "E:102 | Datatype", "E:103 | ID not found"]
 
 function logWait(){
   return new Promise((resolve, reject) => {
-    cloudlink.addEventListener("message", (event) => {
-      if (JSON.parse(event.data).val == "I:100 | OK") {resolve()}
+    cloudlink.addEventListener("message", (event) => { 
+      if (JSON.parse(event.data).val == "I:100 | OK") {resolve()} else if (fails.include(JSON.parse(event.data).val)) {reject()}
     })
   })
 }
