@@ -5,7 +5,15 @@ let mostRecentPost = "None";
 let mostRecentPoster = "None";
 let mostRecentPostOrigin = "None";
 let cloudlink;
+let loggedIn = "None";
 
+function logWait(){
+  return new Promise((resolve, reject) => {
+    cloudlink.addEventListener("message", (event) => {
+      if (JSON.parse(event.data).val == "I:100 | OK") {resolve()}
+    })
+  })
+}
 
 function handleIncomingPacket(packet) {
   if (packet.val.t) {
@@ -45,6 +53,7 @@ function login(username, password) {
     }
   };
   cloudlink.send(JSON.stringify(authPacket));
+  return logWait();
 }
 
 
@@ -146,7 +155,7 @@ class MeowerUtils {
   }
 
   login(args) {
-    login(args.username, args.password);
+    return login(args.username, args.password);
   }
 
   sendMessage(args) {
