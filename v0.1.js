@@ -71,7 +71,7 @@ function sendMessage(message, channel) {
       'Token': token
     },
     body: JSON.stringify({
-      content: message
+      content: message.toString()
     })
   })
   .then(response => {
