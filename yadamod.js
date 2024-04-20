@@ -1,14 +1,17 @@
-// this is a mod by yadayadayadagoodbye on meower (or pandapandapandapandapandapanda on github) that removed the need to manually place the wait block after placing a "connect to meower" and "login" blocks
+// this is a mod by yadayadayadagoodbye on meower (or pandapandapandapandapandapanda on github) that removed the need to manually place the wait block after placing a "connect to meower" and "login" 
+let token;
+let jsonBlob;
+let mostRecentPost = "None";
 let mostRecentPoster = "None";
 let mostRecentPostOrigin = "None";
 let cloudlink;
-let mostRecentPost = "None";
 let loggedIn = "None";
+const fails = ["I:011 | Invalid Password", "E:018 | Account Banned", "E:025 | Deleted", "E:101 | Syntax", "E:102 | Datatype", "E:103 | ID not found"]
 
 function logWait(){
   return new Promise((resolve, reject) => {
-    cloudlink.addEventListener("message", (event) => {
-      if (JSON.parse(event.data).val == "I:100 | OK") {resolve()}
+    cloudlink.addEventListener("message", (event) => { 
+      if (JSON.parse(event.data).val == "I:100 | OK") {resolve()} else if (fails.include(JSON.parse(event.data).val)) {reject()}
     })
   })
 }
@@ -28,6 +31,8 @@ function handleIncomingPacket(packet) {
     mostRecentPostOrigin = packet.val.post_origin;
   }
 }
+
+
 function onMessage(event) {
   const packet = JSON.parse(event.data);
   console.log("Received packet:", packet);
@@ -39,6 +44,7 @@ function onMessage(event) {
     console.log("Token not found in the received packet.");
   }
 }
+
 function login(username, password) {
   const authPacket = {
     cmd: "direct",
@@ -57,6 +63,7 @@ function sendMessage(message, channel) {
   if (channel !== 'home') {
     url = `https://api.meower.org/posts/${channel}`;
   }
+
   fetch(url, {
     method: 'POST',
     headers: {
@@ -80,6 +87,8 @@ function sendMessage(message, channel) {
     console.error('There was a problem sending the message:', error);
   });
 }
+
+
 class MeowerUtils {
   constructor() {
     cloudlink = new WebSocket("wss://server.meower.org");
@@ -87,11 +96,12 @@ class MeowerUtils {
     cloudlink.onopen = () => console.log("WebSocket connection opened.");
     cloudlink.onerror = (error) => console.error("WebSocket error:", error);
   }
+
   getInfo() {
     return {
       id: 'meowerutils',
       name: 'Meower Utilities',
-      color1: '#FFC0CB',
+      color1: '#FFA500',
       color2: '#FFFFFF',
       blocks: [
         {
@@ -146,27 +156,35 @@ class MeowerUtils {
   }
 
   login(args) {
-    login(args.username, args.password);
     return login(args.username, args.password);
   }
 
   sendMessage(args) {
     sendMessage(args.message, args.chat);
   }
+
   getMostRecentPost() {
     return mostRecentPost;
   }
+
   getMostRecentPoster() {
     return mostRecentPoster;
   }
+
   getMostRecentPostOrigin() {
     return mostRecentPostOrigin;
   }
+
   connectToWebSocket() {
     cloudlink = new WebSocket("wss://server.meower.org");
     cloudlink.onmessage = onMessage;
     cloudlink.onopen = () => console.log("WebSocket connection opened.");
     cloudlink.onerror = (error) => console.error("WebSocket error:", error);
+    return new Promise((resolve, reject) => {
+      cloudlink.addEventListener("open", () => { resolve()
+      })
+    })
   }
 }
+
 Scratch.extensions.register(new MeowerUtils());
