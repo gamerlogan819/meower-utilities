@@ -1,3 +1,6 @@
+// A mod of meower utils by ShowierData9978 using the meower.js library instead of the typical way to do it
+
+
 (async (Scratch) => {
 await import("https://unpkg.com/@meower-media/meower@2.0.0-alpha11/dist/browser/meower.bundle.js")
 await import("https://unpkg.com/@meower-media/meower@2.0.0-alpha11/dist/browser/bot.bundle.js")
