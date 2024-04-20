@@ -91,7 +91,7 @@ class MeowerUtils {
     return {
       id: 'meowerutils',
       name: 'Meower Utilities',
-      color1: '#FFA500',
+      color1: '#FFC0CB',
       color2: '#FFFFFF',
       blocks: [
         {
