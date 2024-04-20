@@ -1,4 +1,4 @@
-// this is a mod by yadayadayadagoodbye on meower (or pandapandapandapandapandapanda on github) that removed the need to manually place the wait block after placing a "connect to meower" block
+// this is a mod by yadayadayadagoodbye on meower (or pandapandapandapandapandapanda on github) that removed the need to manually place the wait block after placing a "connect to meower" and "login" blocks
 let mostRecentPoster = "None";
 let mostRecentPostOrigin = "None";
 let cloudlink;
