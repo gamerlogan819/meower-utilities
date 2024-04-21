@@ -1,4 +1,5 @@
 // THE HATERS SAID WE COULDNT DO IT BUT WE DID IT CHAT 🔥🔥🔥🔥🔥
+// this is the official base version by gamerlogan819, for added features you csn check out yadamod or showermod
 let token;
 let jsonBlob;
 let mostRecentPost = "None";
