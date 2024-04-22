@@ -1,12 +1,10 @@
 // THE HATERS SAID WE COULDNT DO IT BUT WE DID IT CHAT 🔥🔥🔥🔥🔥
 // this is the official base version by gamerlogan819, for added features you csn check out yadamod or showermod
 let token;
-let jsonBlob;
 let mostRecentPost = "None";
 let mostRecentPoster = "None";
 let mostRecentPostOrigin = "None";
 let cloudlink;
-
 
 function handleIncomingPacket(packet) {
   if (packet.val.t) {
@@ -24,12 +22,11 @@ function handleIncomingPacket(packet) {
   }
 }
 
-
 function onMessage(event) {
   const packet = JSON.parse(event.data);
   console.log("Received packet:", packet);
-  handleIncomingPacket(packet); 
-  if (packet.val.payload && packet.val.payload.token) { 
+  handleIncomingPacket(packet);
+  if (packet.val.payload && packet.val.payload.token) {
     token = packet.val.payload.token;
     console.log("Token:", token);
   } else {
@@ -47,7 +44,6 @@ function login(username, password) {
   };
   cloudlink.send(JSON.stringify(authPacket));
 }
-
 
 function sendMessage(message, channel) {
   let url = 'https://api.meower.org/home';
@@ -79,13 +75,44 @@ function sendMessage(message, channel) {
   });
 }
 
-
 class MeowerUtils {
   constructor() {
+    this.latestPacket = null;
     cloudlink = new WebSocket("wss://server.meower.org");
-    cloudlink.onmessage = onMessage;
-    cloudlink.onopen = () => console.log("WebSocket connection opened.");
+    cloudlink.onmessage = this.onMessage.bind(this);
+    cloudlink.onopen = () => {
+      console.log("WebSocket connection opened.");
+    };
     cloudlink.onerror = (error) => console.error("WebSocket error:", error);
+  }
+
+  handleIncomingPacket(packet) {
+    if (packet.val.t) {
+      if (packet.val.u === "Discord") {
+        const parts = packet.val.p.split(": ");
+        if (parts.length === 2) {
+          mostRecentPost = parts[1].trim();
+          mostRecentPoster = parts[0].trim();
+        }
+      } else {
+        mostRecentPost = packet.val.p;
+        mostRecentPoster = packet.val.u;
+      }
+      mostRecentPostOrigin = packet.val.post_origin;
+    }
+  }
+
+  onMessage(event) {
+    const packet = JSON.parse(event.data);
+    console.log("Received packet:", packet);
+    this.latestPacket = packet;
+    this.handleIncomingPacket(packet);
+    if (packet.val.payload && packet.val.payload.token) {
+      token = packet.val.payload.token;
+      console.log("Token:", token);
+    } else {
+      console.log("Token not found in the received packet.");
+    }
   }
 
   getInfo() {
@@ -141,6 +168,21 @@ class MeowerUtils {
           opcode: 'connectToWebSocket',
           blockType: Scratch.BlockType.COMMAND,
           text: 'connect to meower'
+        },
+        {
+          opcode: 'isWebSocketOpen',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: 'connected to meower?'
+        },
+        {
+          opcode: 'disconnectFromMeower',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'disconnect from meower'
+        },
+        {
+          opcode: 'getRawPacket',
+          blockType: Scratch.BlockType.REPORTER,
+          text: 'raw packet'
         }
       ]
     };
@@ -168,9 +210,24 @@ class MeowerUtils {
 
   connectToWebSocket() {
     cloudlink = new WebSocket("wss://server.meower.org");
-    cloudlink.onmessage = onMessage;
-    cloudlink.onopen = () => console.log("WebSocket connection opened.");
-    cloudlink.onerror = (error) => console.error("WebSocket error:", error);
+    cloudlink.onmessage = this.onMessage.bind(this);
+    cloudlink.onopen = () => {
+      console.log("Websocket connection opened");
+    };
+    cloudlink.onerror = (error) => console.error("Websocket error:", error);
+  }
+
+  isWebSocketOpen() {
+    return cloudlink.readyState === WebSocket.OPEN;
+  }
+
+  disconnectFromMeower() {
+    cloudlink.close();
+    console.log("Disconnected from Meower");
+  }
+
+  getRawPacket() {
+    return JSON.stringify(this.latestPacket)
   }
 }
 
