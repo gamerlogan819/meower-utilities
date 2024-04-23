@@ -139,6 +139,21 @@ function getPostWithID(id){
   })
 }
 
+function deletePost(id){
+  fetch(`https://api.meower.org/posts?id=${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Token': token
+    }
+  }).then((response) => {
+    if (!response.ok) {
+      console.error("Problem getting message:", response.status);
+    } else {
+      console.log("Post deleted");
+    }
+  })
+}
+
 class MeowerUtils {
   constructor() {
     cloudlink = new WebSocket("wss://server.meower.org");
@@ -198,6 +213,16 @@ class MeowerUtils {
           }
         },
         {
+          opcode: "deletePost",
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'delete post with post_id [id]',
+          arguments: {
+            id: {
+              type: Scratch.ArgumentType.STRING,
+            }
+          }
+        },
+        {
           opcode: 'beginTyping',
           blockType: Scratch.BlockType.COMMAND,
           text: 'start typing in [chat]',
@@ -245,7 +270,8 @@ class MeowerUtils {
           text: 'post with id [ID]',
           arguments: {
             ID: {
-              type: Scratch.ArgumentType.STRING
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: "6a1d7ac8-adb4-4f44-89c4-ba414f530ba5"
             }
           }
         }
@@ -286,11 +312,16 @@ class MeowerUtils {
     console.log("Disconnected from Meower");
   }
 
+  deletePost(args) {
+    deletePost(args.id);
+  }
+
   async pastMessagesHome(args) {
     return (await pastMessagesHome(args.page)).autoget.map((obj) => {
       delete obj["isDeleted"];
       delete obj["_id"];
       delete obj["pinned"];
+      delete obj['type'];
       return JSON.stringify(obj);
     });
   }
@@ -301,6 +332,7 @@ class MeowerUtils {
     delete temp['_id'];
     delete temp['pinned'];
     delete temp['isDeleted'];
+    delete temp['type'];
     return JSON.stringify(temp);
   }
 
