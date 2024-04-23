@@ -128,6 +128,17 @@ async function pastMessagesHome(page){
   })
 }
 
+function getPostWithID(id){
+  return fetch(`https://api.meower.org/posts?id=${id}`, {
+    method: 'GET'
+  }).then((response) => {
+    if (!response.ok) {
+      console.error("Problem getting message:", response.status);
+    }
+    return response.json();
+  })
+}
+
 class MeowerUtils {
   constructor() {
     cloudlink = new WebSocket("wss://server.meower.org");
@@ -227,6 +238,16 @@ class MeowerUtils {
               defaultValue: '1'
             }
           }
+        },
+        {
+          opcode: 'getPostWithID',
+          blockType: Scratch.BlockType.REPORTER,
+          text: 'post with id [ID]',
+          arguments: {
+            ID: {
+              type: Scratch.ArgumentType.STRING
+            }
+          }
         }
       ]
     };
@@ -272,6 +293,15 @@ class MeowerUtils {
       delete obj["pinned"];
       return JSON.stringify(obj);
     });
+  }
+
+  async getPostWithID(args){
+    const temp = (await getPostWithID(args.ID));
+    delete temp['error'];
+    delete temp['_id'];
+    delete temp['pinned'];
+    delete temp['isDeleted'];
+    return JSON.stringify(temp);
   }
 
   connectToWebSocket() {
