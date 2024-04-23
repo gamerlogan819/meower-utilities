@@ -29,6 +29,9 @@ function handleIncomingPacket(packet) {
       mostRecentPoster = packet.val.u;
     }
     mostRecentPostOrigin = packet.val.post_origin;
+    if (mostRecentPostOrigin == "home") {
+      Scratch.vm.runtime.startHats("meowerutils_whenNewMessageInHome")
+    }
   }
 }
 
@@ -57,6 +60,31 @@ function login(username, password) {
   return logWait();
 }
 
+function beginTyping(channel){
+  let url = 'https://api.meower.org/home/typing';
+  if (channel !== 'home') {
+    url = `https://api.meower.org/${channel}/typing`;
+  }
+
+  fetch(url, {
+    method:'POST',
+    headers:{
+    'Token': token
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Message sent successfully:', data);
+  })
+  .catch(error => {
+    console.error('There was a problem sending the message:', error);
+  });
+}
 
 function sendMessage(message, channel) {
   let url = 'https://api.meower.org/home';
@@ -71,7 +99,7 @@ function sendMessage(message, channel) {
       'Token': token
     },
     body: JSON.stringify({
-      content: message
+      content: message.toString()
     })
   })
   .then(response => {
@@ -88,6 +116,17 @@ function sendMessage(message, channel) {
   });
 }
 
+async function pastMessagesHome(page){
+  return fetch(`https://api.meower.org/home?autoget&page=${page}`, {
+    method: 'GET',
+    headers: (token && {'Token': token})
+  }).then((response) => {
+  if (!response.ok)  {
+    console.error("Problem getting messages:", response.status);
+  }
+  return response.json();
+  })
+}
 
 class MeowerUtils {
   constructor() {
@@ -101,9 +140,20 @@ class MeowerUtils {
     return {
       id: 'meowerutils',
       name: 'Meower Utilities',
-      color1: '#FFC0CB',
+      color1: '#FFA500',
       color2: '#FFFFFF',
       blocks: [
+        {
+          opcode: 'whenNewMessageInHome',
+          blockType: Scratch.BlockType.EVENT,
+          text: 'when new message received in home',
+          isEdgeActivated:false
+        },
+        {
+          opcode: 'connectToWebSocket',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'connect to meower'
+        },
         {
           opcode: 'login',
           blockType: Scratch.BlockType.COMMAND,
@@ -132,6 +182,17 @@ class MeowerUtils {
           }
         },
         {
+          opcode: 'beginTyping',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'start typing in [chat]',
+          arguments: {
+            chat: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'home' 
+            }
+          }
+        },
+        {
           opcode: 'getMostRecentPost',
           blockType: Scratch.BlockType.REPORTER,
           text: 'most recent post'
@@ -147,9 +208,15 @@ class MeowerUtils {
           text: 'most recent post origin'
         },
         {
-          opcode: 'connectToWebSocket',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'connect to meower'
+          opcode: 'pastMessagesHome',
+          blockType: Scratch.BlockType.REPORTER,
+          text: 'past posts in home on page [page]',
+          arguments:{
+            page:{
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: '1'
+            }
+          }
         }
       ]
     };
@@ -173,6 +240,19 @@ class MeowerUtils {
 
   getMostRecentPostOrigin() {
     return mostRecentPostOrigin;
+  }
+
+  beginTyping (args) {
+    beginTyping(args.chat);
+  }
+
+  async pastMessagesHome(args) {
+    return (await pastMessagesHome(args.page)).autoget.map((obj) => {
+      delete obj["isDeleted"];
+      delete obj["_id"];
+      delete obj["pinned"];
+      return JSON.stringify(obj);
+    });
   }
 
   connectToWebSocket() {
