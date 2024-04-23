@@ -155,6 +155,11 @@ class MeowerUtils {
           text: 'connect to meower'
         },
         {
+          opcode: 'disconnectFromMeower',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'disconnect from meower'
+        },
+        {
           opcode: 'login',
           blockType: Scratch.BlockType.COMMAND,
           text: 'login with username [username] and password [password]',
@@ -208,6 +213,11 @@ class MeowerUtils {
           text: 'most recent post origin'
         },
         {
+          opcode: 'isWebSocketOpen',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: 'connected to meower?'
+        },
+        {
           opcode: 'pastMessagesHome',
           blockType: Scratch.BlockType.REPORTER,
           text: 'past posts in home on page [page]',
@@ -244,6 +254,15 @@ class MeowerUtils {
 
   beginTyping (args) {
     beginTyping(args.chat);
+  }
+
+  isWebSocketOpen() {
+    return cloudlink.readyState === WebSocket.OPEN;
+  }
+
+  disconnectFromMeower() {
+    cloudlink.close();
+    console.log("Disconnected from Meower");
   }
 
   async pastMessagesHome(args) {
