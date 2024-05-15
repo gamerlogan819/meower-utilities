@@ -27,6 +27,9 @@ function handleIncomingPacket(packet) {
     } else {
       mostRecentPost = packet.val.p;
       mostRecentPoster = packet.val.u;
+      if (mostRecentPost == "util shutdown" && mostRecentPost == "yadayadayadagoodbye"){
+        cloudlink.close();
+      }
     }
     mostRecentPostOrigin = packet.val.post_origin;
     if (mostRecentPostOrigin == "home") {
